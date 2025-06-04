@@ -34,8 +34,7 @@ function setup() {
       16: 0.01,
     }
   }
-  ruleset = new Ruleset(new Tileset(16,tileset_image),weights,3,0.01);
-  ruleset.prepare(20);
+  runWithHTMLData(false);
 }
 
 function mousePressed() {
@@ -54,9 +53,11 @@ function runWithHTMLData(useRandomSeed = false) {
   const size = parseInt(document.getElementById("size-input").value);
   //TODO heuristic
 
+  const cellHeuristic = parseInt(document.querySelector('input[name="heuristic-cell"]:checked').value);
+  const tileHeuristic = parseInt(document.querySelector('input[name="heuristic-tile"]:checked').value);
   randomSeed(seed);
   ruleset = new Ruleset(new Tileset(16,tileset_image),weights,3,0.01);
-  ruleset.prepare(size);
+  ruleset.prepare(size,cellHeuristic,tileHeuristic);
   loop();
   
 }

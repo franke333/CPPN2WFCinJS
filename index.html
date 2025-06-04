@@ -20,10 +20,16 @@
     <input type="number" id="size-input" placeholder="Size" min="1" value="20">
 
     <div>
-      <label>Heuristic:</label>
-      <label><input type="radio" name="heuristic" value="heuristic1" checked> Heuristic 1</label>
-      <label><input type="radio" name="heuristic" value="heuristic2"> Heuristic 2</label>
-      <label><input type="radio" name="heuristic" value="heuristic3"> Heuristic 3</label>
+      <label>Cell selection heuristic:</label>
+      <label><input type="radio" name="heuristic-cell" value="0"> Random tile</label>
+      <label><input type="radio" name="heuristic-cell" value="1" checked> Weighted layout (continous)</label>
+      <label><input type="radio" name="heuristic-cell" value="2"> Weighted layout (argmax)</label>
+    </div>
+    <div>
+      <label>Tile selection heuristic:</label>
+      <label><input type="radio" name="heuristic-tile" value="0"> Smallest superposition</label>
+      <label><input type="radio" name="heuristic-tile" value="1" checked> Franks Entropy</label>
+      <label><input type="radio" name="heuristic-tile" value="2"> Shannons Entropy </label>
     </div>
 
     <button id="generate-btn" onclick="runWithHTMLData()">Generate</button>

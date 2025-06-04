@@ -57,7 +57,7 @@ class Ruleset{
         return entropy;
     }
 
-    customHeuristic(wfc){
+    customHeuristic(entropy,wfc){
         let bextX = 0;
         let bextY = 0;
         let bestHeuristic = -Infinity;
@@ -72,7 +72,7 @@ class Ruleset{
                 for(const tile of possibleTiles){
                     p[tile] = this.normalizedWeights[x][y][tile];
                 }
-                const h = this.fandaEntropy(Object.values(p));
+                const h = entropy(Object.values(p));
                 if(h > bestHeuristic){
                     bestHeuristic = h;
                     bextX = x;
@@ -152,12 +152,27 @@ class Ruleset{
         }
     }
 
-    prepare(size){
+    prepare(size,tileHeuristic = 0,cellHeuristic = 0){
         this.cppn = new CPPN(3, this.layoutCount, size, 1);
         this.cppn.generateData();
         this.precalulateNormWeights(size);
+        let tileHeuristicFunc = null;
+        if(tileHeuristic == 1){
+            tileHeuristicFunc = this.weightedNormalizedCollapseHeursitic.bind(this);
+        }
+        else if(tileHeuristic == 2){
+            tileHeuristicFunc = this.weightedArgmaxCollapseHeuristic.bind(this);
+        }
+
+        let cellHeuristicFunc = null;
+        if(cellHeuristic == 1){
+            cellHeuristicFunc = this.customHeuristic.bind(this,this.fandaEntropy.bind(this));
+        }
+        else if(cellHeuristic == 2){
+            cellHeuristicFunc = this.customHeuristic.bind(this,this.shannonEntropy.bind(this));
+        }
         
-        this.wfc = new WFC(size, size, this.tileset, 5, this.weightedNormalizedCollapseHeursitic.bind(this), this.customHeuristic.bind(this));
+        this.wfc = new WFC(size, size, this.tileset, 5, tileHeuristicFunc, cellHeuristicFunc);
         this.wfc.restart();
     }
 
