@@ -137,15 +137,18 @@ class Ruleset{
 
     drawRulesetDebug(x,y){
         let tileSize = this.tileset.tileSize;
-        if(this.wfc)
+        let offsetX = 0;
+        if(this.wfc){
             this.wfc.drawCurrentState();
-        let size = 0;
-        if(this.wfc)
-            size = this.wfc.width+1;
-        this.tileset.drawTileset(tileSize*size,0);
+            offsetX = tileSize*this.wfc.width+20;
+        }
+        this.tileset.drawTileset(offsetX,0);
+        offsetX += ceil(sqrt(this.tileset.tileCount))* (tileSize+1) + 20;
         if(this.cppn){
-            this.cppn.draw(440,0,10,true);
-            this.cppn.draw(650,0,10,false);
+            const layoutTileSize = 10;
+            const offsetY = this.wfc.height * (layoutTileSize)+10;
+            this.cppn.draw(offsetX,0,layoutTileSize,true);
+            this.cppn.draw(offsetX,offsetY,layoutTileSize,false);
         }
     }
 

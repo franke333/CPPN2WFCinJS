@@ -6,9 +6,9 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(1000, 1000);
+  createCanvas(1600, 1600);
   randomSeed(18); //18, 108
-  const weights = {
+  weights = {
     0: {
       3: 1,
 
@@ -39,9 +39,26 @@ function setup() {
 }
 
 function mousePressed() {
-  running = !running;
+}
 
-  redraw(); // Manually trigger a new draw() call when mouse is pressed
+
+function runWithHTMLData(useRandomSeed = false) {
+  let seed = 0;
+  if(useRandomSeed){
+    seed = Math.floor(Math.random() * 1000000);
+    document.getElementById("seed-input").value = seed;
+  }
+  else{
+    seed = parseInt(document.getElementById("seed-input").value);
+  }
+  const size = parseInt(document.getElementById("size-input").value);
+  //TODO heuristic
+
+  randomSeed(seed);
+  ruleset = new Ruleset(new Tileset(16,tileset_image),weights,3,0.01);
+  ruleset.prepare(size);
+  loop();
+  
 }
 
 function draw() {

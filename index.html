@@ -14,13 +14,26 @@
 
   <body>
     <!-- NeatJS -->
+    <label for="seed-input">Seed:</label>
+    <input type="text" id="seed-input" placeholder="Seed" value="18">
+    <label for="size-input">Size:</label>
+    <input type="number" id="size-input" placeholder="Size" min="1" value="20">
+
+    <div>
+      <label>Heuristic:</label>
+      <label><input type="radio" name="heuristic" value="heuristic1" checked> Heuristic 1</label>
+      <label><input type="radio" name="heuristic" value="heuristic2"> Heuristic 2</label>
+      <label><input type="radio" name="heuristic" value="heuristic3"> Heuristic 3</label>
+    </div>
+
+    <button id="generate-btn" onclick="runWithHTMLData()">Generate</button>
+    <button id="generate-btn" onclick="runWithHTMLData(true)">Generate (Random Seed)</button>
     <script src="cppn/cppn.js"></script>
 		<script src="cppn/population.js"></script>
 		<script src="cppn/player.js"></script>
 		<script src="cppn/node.js"></script>
 		<script src="cppn/connection.js"></script>
 		<script src="cppn/genome.js"></script>
-		<script src="cppn/sketch.js"></script>
 
     <script src="utility.js"></script>
     <script src="sketch.js"></script>
