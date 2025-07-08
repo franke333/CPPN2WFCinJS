@@ -39,6 +39,14 @@ class CPPN {
         }
     }
 
+    mutate(){
+        this.population.population.forEach(player => {
+            player.brain.mutate();
+        });
+        this.population.updateAlive();
+        this.generateData();
+    }
+
     getLayoutAt(x,y,argmaxed,pop=0){
         if(argmaxed){
             return this.dataArgmax[pop][x][y];

@@ -58,8 +58,8 @@ class Ruleset{
     }
 
     customHeuristic(entropy,wfc){
-        let bextX = 0;
-        let bextY = 0;
+        let bextX = -1;
+        let bextY = -1;
         let bestHeuristic = -Infinity;
         for(let x = 0; x < wfc.width; x++){
             for(let y = 0; y < wfc.height; y++){
@@ -79,6 +79,9 @@ class Ruleset{
                     bextY = y;
                 }
             }
+        }
+        if(bextX == -1 || bextY == -1){
+            return null;
         }
         return [bextX, bextY];
     }
@@ -104,7 +107,7 @@ class Ruleset{
         return collapsedTile;
     }
 
-    precalulateNormWeights(size){
+    precalculateNormWeights(size){
         this.normalizedWeights = new Array(size);
         for(let i = 0; i < size; i++){
             this.normalizedWeights[i] = new Array(size);
@@ -137,25 +140,26 @@ class Ruleset{
 
     drawRulesetDebug(x,y){
         let tileSize = this.tileset.tileSize;
-        let offsetX = 0;
+        let offsetX = x;
         if(this.wfc){
-            this.wfc.drawCurrentState();
+            this.wfc.drawCurrentState(x,y);
             offsetX = tileSize*this.wfc.width+20;
         }
-        this.tileset.drawTileset(offsetX,0);
+        this.tileset.drawTileset(offsetX,y);
         offsetX += ceil(sqrt(this.tileset.tileCount))* (tileSize+1) + 20;
         if(this.cppn){
             const layoutTileSize = 10;
-            const offsetY = this.wfc.height * (layoutTileSize)+10;
-            this.cppn.draw(offsetX,0,layoutTileSize,true);
+            const offsetY = this.wfc.height * (layoutTileSize)+10 + y;
+            this.cppn.draw(offsetX,y,layoutTileSize,true);
             this.cppn.draw(offsetX,offsetY,layoutTileSize,false);
         }
     }
 
+    draw(x,y){
+        this.wfc.drawCurrentState(x,y);
+    }
+
     prepare(size,tileHeuristic = 0,cellHeuristic = 0){
-        this.cppn = new CPPN(3, this.layoutCount, size, 1);
-        this.cppn.generateData();
-        this.precalulateNormWeights(size);
         let tileHeuristicFunc = null;
         if(tileHeuristic == 1){
             tileHeuristicFunc = this.weightedNormalizedCollapseHeursitic.bind(this);
@@ -163,7 +167,7 @@ class Ruleset{
         else if(tileHeuristic == 2){
             tileHeuristicFunc = this.weightedArgmaxCollapseHeuristic.bind(this);
         }
-
+        
         let cellHeuristicFunc = null;
         if(cellHeuristic == 1){
             cellHeuristicFunc = this.customHeuristic.bind(this,this.fandaEntropy.bind(this));
@@ -172,24 +176,24 @@ class Ruleset{
             cellHeuristicFunc = this.customHeuristic.bind(this,this.shannonEntropy.bind(this));
         }
         
-        this.wfc = new WFC(size, size, this.tileset, 5, tileHeuristicFunc, cellHeuristicFunc);
+        this.cppn = new CPPN(3, this.layoutCount, size, 10);
+        this.size = size;
+        this.wfc = new WFC(size, size, this.tileset, 10, tileHeuristicFunc, cellHeuristicFunc);
+        
+        this.restart();
+    }
+
+    restart(){
+        this.cppn.generateData();
+        this.precalculateNormWeights(this.size);
         this.wfc.restart();
     }
 
     runStep(){
-        this.wfc.runstep();
+        return this.wfc.runstep();
     }
 
     run(){
-        let running = true;
-        while (running) {
-            this.wfc.restart();
-            this.wfc.run();
-            running = !this.wfc.finishedSuccessfully();
-            if(!running)
-                print("done");
-            else
-                print("restart");
-        }
+        this.wfc.run(true);
     }
 }

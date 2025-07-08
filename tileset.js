@@ -20,8 +20,9 @@ class Tile{
     hashCode(){
         let hash = 0;
         this.image.loadPixels();
-        for(let i=0;i<this.image.width*this.image.height*4;i++)
-            hash += this.image.pixels[i]*i;
+        const size = this.image.width * this.image.height * 4;
+        for(let i=0;i<size;i++)
+            hash += this.image.pixels[i]*i*size;
         return hash;
     }
 }

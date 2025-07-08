@@ -136,11 +136,11 @@ class WFC{
         return true;
     }
 
-    drawCurrentState(){
+    drawCurrentState(x=0,y=0){
         const gridlinesize = 0;
         for(var j=0;j<this.height;j++){
             for(var i=0;i<this.width;i++){
-                this.map[j][i].draw(this.tileset,i*(gridlinesize+this.tileset.tileSize),j*(gridlinesize+this.tileset.tileSize));
+                this.map[j][i].draw(this.tileset,x+i*(gridlinesize+this.tileset.tileSize),y+j*(gridlinesize+this.tileset.tileSize));
             }
         }
     }
@@ -290,9 +290,12 @@ class WFC{
             return this.finishedSuccessfully();
         }
 
-        while(!this.finishedSuccessfully()){
-            this.restart();
+        while(true){
             while(this.runstep()){}
+            if(this.finishedSuccessfully())
+                break;
+            this.restart();
+            console.log("Fail");
         }
         return true;
     }

@@ -1,4 +1,4 @@
-DATA = dragon_warrior;
+DATA = pokemon;
 
 function preload() {
   tileset_image = loadImage(DATA.imagepath);
@@ -9,6 +9,7 @@ function setup() {
   randomSeed(18); //18, 108
   weights = DATA.weights;
   //Object.keys(weights).forEach((key) => {weights[key] = normalizeDict(weights[key]);});
+  tileset = new Tileset(DATA.size,tileset_image);
   runWithHTMLData(false);
 }
 
@@ -31,7 +32,7 @@ function runWithHTMLData(useRandomSeed = false) {
   const cellHeuristic = parseInt(document.querySelector('input[name="heuristic-cell"]:checked').value);
   const tileHeuristic = parseInt(document.querySelector('input[name="heuristic-tile"]:checked').value);
   randomSeed(seed);
-  ruleset = new Ruleset(new Tileset(DATA.size,tileset_image),weights,3,0.001);
+  ruleset = new Ruleset(tileset,weights,3,0.001);
   ruleset.prepare(size,cellHeuristic,tileHeuristic);
   instant = document.getElementById("instant-run-checkbox").checked;
   loop();
@@ -50,13 +51,13 @@ function draw() {
   
   if(instant){
     ruleset.run();
-    ruleset.draw(0,0);
+    ruleset.drawRulesetDebug(0,0);
     noLoop();
   }
   else{
     if(!ruleset.runStep())
       ruleset.wfc.restart();
-    ruleset.draw(0,0);
+    ruleset.drawRulesetDebug(0,0);
     if(ruleset.wfc.finishedSuccessfully()){
       noLoop();
     }
