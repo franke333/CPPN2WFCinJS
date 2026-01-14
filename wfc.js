@@ -53,7 +53,7 @@ class Cell{
 }
 
 class WFC{
-    constructor(width,height,tileset,nuking_limit=0,tileSelector=null,cellSelector=null){
+    constructor(width,height,tileset,nuking_limit=0,tileSelector=null,cellSelector=null,id=0){
         this.width = width;
         this.height = height;
         this.tileset = tileset;
@@ -61,7 +61,7 @@ class WFC{
         this.nuking_limit = nuking_limit;
         this.tileSelector = tileSelector || this._defaultCollapseHeuristic;
         this.cellSelector = cellSelector || this._defaultNextCellToCollapseHeuristic;
-
+        this.id = id;
         
         this.restart();
     }

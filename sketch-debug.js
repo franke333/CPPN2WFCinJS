@@ -1,4 +1,4 @@
-DATA = pokemon;
+DATA = dragon_warrior;
 
 function preload() {
   tileset_image = loadImage(DATA.imagepath);
@@ -11,9 +11,24 @@ function setup() {
   //Object.keys(weights).forEach((key) => {weights[key] = normalizeDict(weights[key]);});
   tileset = new Tileset(DATA.size,tileset_image);
   runWithHTMLData(false);
+  rects = {};
+  selected = [];
+  needToRerun = true;
 }
 
 function mousePressed() {
+  for(const key of Object.keys(rects)){
+    const r = rects[key];
+    if(mouseX >= r.x && mouseX <= r.x + r.width && mouseY >= r.y && mouseY <= r.y + r.height){
+      console.log("Clicked tile:", key);
+      if(selected.includes(key)){
+        selected = selected.filter(item => item !== key);
+      }
+      else{
+        selected.push(key);
+      }
+    }
+  }
 }
 
 
@@ -32,7 +47,7 @@ function runWithHTMLData(useRandomSeed = false) {
   const cellHeuristic = parseInt(document.querySelector('input[name="heuristic-cell"]:checked').value);
   const tileHeuristic = parseInt(document.querySelector('input[name="heuristic-tile"]:checked').value);
   randomSeed(seed);
-  ruleset = new Ruleset(tileset,weights,3,0.001);
+  ruleset = new Ruleset(tileset,weights,3,12,0.001);
   ruleset.prepare(size,cellHeuristic,tileHeuristic);
   instant = document.getElementById("instant-run-checkbox").checked;
   loop();
@@ -42,25 +57,30 @@ function runWithHTMLData(useRandomSeed = false) {
 function mutate(){
   ruleset.cppn.mutate();
   ruleset.restart();
-  loop();
+  needToRerun = true;
 }
 
-function draw() {
+function draw() {  
+  if(needToRerun){
+    rerunRuleset();
+  }
+  drawSelection();
+}
+
+function rerunRuleset(){
   noSmooth();
   background(0);
-  
-  if(instant){
-    ruleset.run();
-    ruleset.drawRulesetDebug(0,0);
-    noLoop();
-  }
-  else{
-    if(!ruleset.runStep())
-      ruleset.wfc.restart();
-    ruleset.drawRulesetDebug(0,0);
-    if(ruleset.wfc.finishedSuccessfully()){
-      noLoop();
-    }
-  }
+  ruleset.run();
+  rects = ruleset.drawGrid(10,10,4);
+  needToRerun = false;
+}
 
+function drawSelection(){
+  for(const r of Object.values(rects)){
+    const thickness = 6;
+    noFill();
+    stroke(selected.includes(r.id) ? 255 : 0,0,0);
+    strokeWeight(thickness);
+    rect(r.x - thickness/2, r.y - thickness/2, r.width + thickness, r.height + thickness);
+  }
 }

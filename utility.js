@@ -57,6 +57,7 @@ function weightedRandom(dict){
     for(let key in dict){
         total += dict[key];
     }
+    // if total is 0, return uniformly random key
     if(total == 0)
         return Object.keys(dict)[Math.floor(random(0, Object.keys(dict).length))];
     let x = random(0,total);

@@ -55,9 +55,9 @@ function draw() {
   }
   else{
     if(!ruleset.runStep())
-      ruleset.wfc.restart();
+      ruleset.restart();
     ruleset.draw(0,0);
-    if(ruleset.wfc.finishedSuccessfully()){
+    if(ruleset.finishedSuccessfully()){
       noLoop();
     }
   }
