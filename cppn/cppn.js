@@ -39,10 +39,8 @@ class CPPN {
         }
     }
 
-    mutate(){
-        this.population.population.forEach(player => {
-            player.brain.mutate();
-        });
+    mutate(parents = []){
+        this.population.naturalSelection(parents);
         this.population.updateAlive();
         this.generateData();
     }

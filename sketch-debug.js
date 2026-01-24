@@ -50,13 +50,16 @@ function runWithHTMLData(useRandomSeed = false) {
   ruleset = new Ruleset(tileset,weights,3,12,0.001);
   ruleset.prepare(size,cellHeuristic,tileHeuristic);
   instant = document.getElementById("instant-run-checkbox").checked;
+  needToRerun = true;
+  selected = [];
   loop();
   
 }
 
 function mutate(){
-  ruleset.cppn.mutate();
-  ruleset.restart();
+  const parents = selected.map(id => parseInt(id));
+  ruleset.cppn.mutate(parents);
+  ruleset.restart(parents);
   needToRerun = true;
 }
 
@@ -68,9 +71,10 @@ function draw() {
 }
 
 function rerunRuleset(){
+  const parents = selected.map(id => parseInt(id));
   noSmooth();
   background(0);
-  ruleset.run();
+  ruleset.run(parents);
   rects = ruleset.drawGrid(10,10,4);
   needToRerun = false;
 }

@@ -212,11 +212,12 @@ class Ruleset{
         this.restart();
     }
 
-    restart(){
+    restart(parents = []){
         this.cppn.generateData();
         this.precalculateNormWeights(this.size);
         for(let wfc of this.wfcs){
-            wfc.restart();
+            if(!parents.includes(wfc.id))
+                wfc.restart();
         }
     }
 
@@ -229,15 +230,16 @@ class Ruleset{
         return true;
     }
 
-    runStep(){
+    runStep(parents = []){
         for(let wfc of this.wfcs)
             if(!wfc.run(false))
                 wfc.restart();
     }
 
-    run(){
+    run(parents = []){
         for(let wfc of this.wfcs)
-            wfc.run(true);
+            if(!parents.includes(wfc.id))
+                wfc.run(true);
     }
 
     getWFCIndexByCoords(x,y){
