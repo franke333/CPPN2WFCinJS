@@ -39,6 +39,12 @@ class CPPN {
         }
     }
 
+    mutate(parents = []){
+        this.population.naturalSelection(parents);
+        this.population.updateAlive();
+        this.generateData();
+    }
+
     getLayoutAt(x,y,argmaxed,pop=0){
         if(argmaxed){
             return this.dataArgmax[pop][x][y];

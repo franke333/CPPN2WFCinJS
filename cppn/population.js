@@ -22,6 +22,7 @@ class Population{
 	updateAlive(){
 		for(let i = 0; i < this.population.length; i++){
 			if(!this.population[i].dead){
+				console.log("Updating player:", i);
 				this.population[i].look();
 				this.population[i].think();
 				this.population[i].move();
@@ -41,21 +42,33 @@ class Population{
 		return true;
 	}
 	
-	naturalSelection(){
-		this.calculateFitness();
-
-		let averageSum = this.getAverageScore();
-		console.log(averageSum);
+	naturalSelection(parents = []){
+		//this.calculateFitness();
+		console.log("Parents for next generation:", parents);
 		let children = [];
 		
-		this.fillMatingPool();
+		
 		for(let i = 0; i < this.population.length; i++){
-			let parent1 = this.selectPlayer();
-			let parent2 = this.selectPlayer();
-			if(parent1.fitness > parent2.fitness)
-				children.push(parent1.crossover(parent2));
-			else
-				children.push(parent2.crossover(parent1));
+			//parents persist
+			if(parents.includes(i))
+				children.push(this.population[i].clone());
+			else if(parents.length >= 2 && random() > 0.33){
+				//crossover
+				let parentAIndex = parents[Math.floor(random() * parents.length)];
+				let parentBIndex = parents[Math.floor(random() * parents.length)];
+				let parentA = this.population[parentAIndex];
+				let parentB = this.population[parentBIndex];
+				let child = parentA.crossover(parentB);
+				children.push(child);
+			}
+			else{
+				//mutation
+				let parentIndex = Math.floor(random(this.population.length));
+				let parent = this.population[parentIndex];
+				let child = parent.clone();
+				child.brain.mutate();
+				children.push(child);
+			}
 		}
 
 
@@ -67,11 +80,6 @@ class Population{
 		});	
 
 		console.log("Generation " + this.generation);
-		//console.log(this);
-
-		this.bestPlayer.lifespan = 0;
-		this.bestPlayer.dead = false;
-		this.bestPlayer.score = 1;
 	}
 
 	calculateFitness(){
@@ -93,28 +101,5 @@ class Population{
 		this.population.forEach((element, elementN) => { 
 			element.fitness /= currentMax;
 		});
-	}
-
-	fillMatingPool(){
-		this.matingPool.splice(0, this.matingPool.length);
-		this.population.forEach((element, elementN) => { 
-			let n = element.fitness * 100;
-			for(let i = 0; i < n; i++)
-				this.matingPool.push(elementN);
-		});
-	}
-
-	selectPlayer(){
-		let rand = Math.floor(random() *  this.matingPool.length);
-		return this.population[this.matingPool[rand]];
-	}
-
-	getAverageScore(){
-		let avSum = 0;
-		this.population.forEach((element) => { 
-			avSum += element.score;
-		});
-
-		return avSum / this.population.length;
 	}
 }

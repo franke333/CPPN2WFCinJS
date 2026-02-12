@@ -25,6 +25,26 @@ function flatten(array){
     return flattened;
 }
 
+function normalize(array){
+    let sum = 0;
+    for(let i = 0; i < array.length; i++){
+        sum += array[i];
+    }
+    if(sum == 0)
+        return array.map(() => 1 / array.length);
+    return array.map(x => x / sum);
+}
+
+function normalizeDict(dict){
+    let sum = 0;
+    for(let key in dict){
+        sum += dict[key];
+    }
+    if(sum == 0)
+        return Object.fromEntries(Object.keys(dict).map(key => [key, 1 / Object.keys(dict).length]));
+    return Object.fromEntries(Object.entries(dict).map(([key, value]) => [key, value / sum]));
+}
+
 
 //TODO: might be a good idea to have tuples instead of dictionary (allows duplicate keys)
 /*
@@ -37,6 +57,7 @@ function weightedRandom(dict){
     for(let key in dict){
         total += dict[key];
     }
+    // if total is 0, return uniformly random key
     if(total == 0)
         return Object.keys(dict)[Math.floor(random(0, Object.keys(dict).length))];
     let x = random(0,total);

@@ -32,16 +32,14 @@ class Player{
 	clone() { //Returns a copy of this player
 		let clone = new Player();
 		clone.brain = this.brain.clone();
+		clone.vision = this.vision.slice();
 		return clone;
 	}
 
 	crossover(parent){ //Produce a child
 		let child = new Player();
-		if(parent.fitness < this.fitness)
-			child.brain = this.brain.crossover(parent.brain);
-		else
-			child.brain = parent.brain.crossover(this.brain);
-
+		child.brain = this.brain.crossover(parent.brain);
+		child.vision = this.vision.slice();
 		child.brain.mutate()
 		return child;
 	}
