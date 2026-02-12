@@ -31,7 +31,7 @@ function runWithHTMLData(useRandomSeed = false) {
   const cellHeuristic = parseInt(document.querySelector('input[name="heuristic-cell"]:checked').value);
   const tileHeuristic = parseInt(document.querySelector('input[name="heuristic-tile"]:checked').value);
   randomSeed(seed);
-  ruleset = new Ruleset(new Tileset(DATA.size,tileset_image),weights,3,0.001);
+  ruleset = new Ruleset(new Tileset(DATA.size,tileset_image),weights,3,1,0.001);
   ruleset.prepare(size,cellHeuristic,tileHeuristic);
   instant = document.getElementById("instant-run-checkbox").checked;
   loop();
@@ -50,7 +50,8 @@ function draw() {
   
   if(instant){
     ruleset.run();
-    ruleset.draw(0,0);
+    //ruleset.draw(0,0);
+    ruleset.drawRulesetDebug(0,0);
     noLoop();
   }
   else{
