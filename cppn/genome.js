@@ -269,8 +269,12 @@ class Genome {
 				nodesPerLayer[node.layer] = 1;
 		});
 
-		for (let i = 0; i < this.layers - 1; i++)
-			for (let j = i + 1; j < this.layers; j++)
+		//remove empty layers
+		nodesPerLayer = nodesPerLayer.filter((x) => { return x != undefined && x > 0; });
+		let numberOfLayers = nodesPerLayer.length;
+
+		for (let i = 0; i < numberOfLayers - 1; i++)
+			for (let j = i + 1; j < numberOfLayers; j++)
 				maxConnections += nodesPerLayer[i] * nodesPerLayer[j];
 
 		//Compare

@@ -5,6 +5,8 @@ function preload() {
 }
 
 function setup() {
+  // run better on mobile devices
+  pixelDensity(1);
   createCanvas(1600, 1600);
   randomSeed(18); //18, 108
   weights = DATA.weights;
