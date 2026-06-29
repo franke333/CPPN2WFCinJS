@@ -159,8 +159,8 @@ class Ruleset{
         if(this.cppn){
             const layoutTileSize = 10;
             const offsetY = this.wfcs[0].height * (layoutTileSize)+10 + y;
-            this.cppn.draw(offsetX,y,layoutTileSize,true);
-            this.cppn.draw(offsetX,offsetY,layoutTileSize,false);
+            this.cppn.draw(offsetX+300,y,layoutTileSize,true);
+            this.cppn.draw(offsetX,y,layoutTileSize,false);
         }
     }
 
@@ -206,14 +206,14 @@ class Ruleset{
         this.size = size;
         this.wfcs = [];
         for(let i = 0; i < this.population; i++){
-            this.wfcs.push(new WFC(size, size, this.tileset, i, tileHeuristicFunc, cellHeuristicFunc, i));
+            this.wfcs.push(new WFC(size, size, this.tileset, 3, tileHeuristicFunc, cellHeuristicFunc, i));
         }
         
         this.restart();
     }
 
     restart(parents = []){
-        this.cppn.generateData();
+        //this.cppn.generateData();
         this.precalculateNormWeights(this.size);
         for(let wfc of this.wfcs){
             if(!parents.includes(wfc.id))

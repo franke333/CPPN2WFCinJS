@@ -33,6 +33,10 @@ class Player{
 		let clone = new Player();
 		clone.brain = this.brain.clone();
 		clone.vision = this.vision.slice();
+		clone.argmax_decisions = this.argmax_decisions.slice();
+		clone.decisions = this.decisions.slice();
+		clone.width = this.width;
+		clone.height = this.height;
 		return clone;
 	}
 
@@ -44,12 +48,6 @@ class Player{
 		return child;
 	}
 
-
-	//Game stuff
-	// get inputs
-	look(){
-		//pass
-	}
 
 	//  ff nn
 	think(){
@@ -78,23 +76,12 @@ class Player{
 
 	// get outputs
 	move(){
-		//TODO
 		let argmax = (arr) => arr.indexOf(Math.max(...arr));
 		this.argmax_decisions.splice(0, this.argmax_decisions.length); //clear the decisions array
 		for(let i = 0; i < this.decisions.length; i++){
 			this.argmax_decisions.push(argmax(this.decisions[i]));
 		}
 		
-	}
-
-	update(){
-		//TODO
-	}
-
-	show(){
-		push();
-		// show the player
-		pop();
 	}
 
 	calculateFitness(){ //Fitness function : adapt it to the needs of the

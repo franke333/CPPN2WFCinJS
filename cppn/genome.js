@@ -289,9 +289,23 @@ class Genome {
 	}
 
 	clone() { //Returns a copy of this genome
-		let clone = new Genome(this.inputs, this.outputs, this.id);
-		clone.nodes = this.nodes.slice(0, this.nodes.length);
-		clone.connections = this.connections.slice(0, this.connections.length);
+		let clone = new Genome(this.inputs, this.outputs, this.id, true);
+		clone.layers = this.layers;
+		clone.nextNode = this.nextNode;
+
+		const nodeLookup = new Map();
+		clone.nodes = this.nodes.map((node) => {
+			const clonedNode = node.clone();
+			nodeLookup.set(node.number, clonedNode);
+			return clonedNode;
+		});
+
+		clone.connections = this.connections.map((connection) => {
+			const clonedConnection = connection.clone();
+			clonedConnection.fromNode = nodeLookup.get(connection.fromNode.number);
+			clonedConnection.toNode = nodeLookup.get(connection.toNode.number);
+			return clonedConnection;
+		});
 
 		return clone;
 	}

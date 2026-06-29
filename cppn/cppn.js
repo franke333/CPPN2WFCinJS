@@ -57,9 +57,11 @@ class CPPN {
 
 
     draw(x,y,size,useArgmaxed=true){
+        
         for(let i =0; i < this.pop_size; i++){
             for(let j = 0; j < this.size; j++){
                 for(let k = 0; k < this.size; k++){
+                    stroke(0.1);
                     if(useArgmaxed){
                         let r = this.colors[this.dataArgmax[i][j][k]][0];
                         let g = this.colors[this.dataArgmax[i][j][k]][1];

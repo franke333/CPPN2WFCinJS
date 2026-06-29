@@ -7,7 +7,7 @@ function preload() {
 function setup() {
   // run better on mobile devices
   pixelDensity(1);
-  createCanvas(1600, 1600);
+  createCanvas(1600, 5000);
   randomSeed(18); //18, 108
   weights = DATA.weights;
   //Object.keys(weights).forEach((key) => {weights[key] = normalizeDict(weights[key]);});
@@ -66,6 +66,7 @@ function mutate(){
 }
 
 function draw() {  
+
   if(needToRerun){
     rerunRuleset();
   }
@@ -74,10 +75,11 @@ function draw() {
 
 function rerunRuleset(){
   const parents = selected.map(id => parseInt(id));
-  noSmooth();
   background(0);
+  noSmooth();
   ruleset.run(parents);
   rects = ruleset.drawGrid(10,10,4);
+  ruleset.drawRulesetDebug(10,1200);
   needToRerun = false;
 }
 

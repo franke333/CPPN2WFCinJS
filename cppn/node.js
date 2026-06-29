@@ -82,8 +82,8 @@ class Node {
 			case 4: //ReLu
 				return x < 0 ? 0 : x;
 				break;
-			default: //Sigmoid
-				return 1 / (1 + Math.pow(Math.E, -4.9 * x));
+			default: //Identity
+				return x;
 				break;
 		}
 	}
