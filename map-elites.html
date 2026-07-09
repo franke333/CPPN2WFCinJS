@@ -19,14 +19,14 @@
       <label>Candidates:</label>
       <label id="candidates">0</label>
       
-      <input type="checkbox" id="toggle-render" onchange="ToggleRenderNewest(this)">
-      <label id="toggle-render" for="toggle-render">render newest added candidates: OFF</label>
+      <input type="checkbox" id="toggle-render" checked onchange="ToggleRenderNewest(this)">
+      <label id="toggle-render" for="toggle-render">render newest added candidates: ON</label>
       
       <button id="download-csv" onclick="DownloadAsCSV()">Download CSV</button>
     </div>
     <script>
       // Global flag other scripts can read
-      window.renderNewestCandidates = false;
+      window.renderNewestCandidates = true;
       function ToggleRenderNewest(el){
         // el is the checkbox element
         window.renderNewestCandidates = !!el.checked;
