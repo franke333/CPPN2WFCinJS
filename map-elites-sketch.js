@@ -14,8 +14,8 @@ function setup() {
     let halfWiidth = WFC_SIZE*DATA_ME.size*2+40;
     createCanvas(2*halfWiidth, halfWiidth);
     pixelDensity(1);
-    seed = parseInt(document.getElementById("seed-input").value) || 42;
-    RunCPPN2WFCMapElites(seed);
+    //seed = parseInt(document.getElementById("seed-input").value) || 42;
+    RunCPPN2WFCMapElites();
     //noLoop();
     maxFitness = 10;
     latest_candidate = null;
@@ -26,7 +26,9 @@ function setup() {
  * Draw the current Map-Elites archive as a 2D grid.
  */
 function draw() {
-    for(let i = 0; i < 1; i++){
+    let toggleRender = document.getElementById("toggle-render").checked;
+    const runsPerFrame = toggleRender ? 1 : 8;
+    for(let i = 0; i < runsPerFrame; i++){
         let parent1 = mapElites.getRandomElite();
         let parent2 = mapElites.getRandomElite();
         let child = ruleset.generateOffspringCandidate(parent1, parent2);
@@ -63,7 +65,7 @@ function draw() {
     }
 
     // Draw latest candidate on right half
-    if (latest_candidate !== null) {
+    if (latest_candidate !== null && toggleRender) {
         const rightStartX = width / 2;
         const rightWidth = width / 2;
         const rightHeight = height;

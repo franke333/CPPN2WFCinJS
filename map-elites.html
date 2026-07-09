@@ -14,12 +14,26 @@
 
   <body>
     <div>
-      <label for="seed-input">Seed:</label>
-      <input type="text" id="seed-input" placeholder="Seed" value="18">
+      <!-- <label for="seed-input">Seed:</label>
+      <input type="text" id="seed-input" placeholder="Seed" value="18"> -->
       <label>Candidates:</label>
       <label id="candidates">0</label>
+      
+      <input type="checkbox" id="toggle-render" onchange="ToggleRenderNewest(this)">
+      <label id="toggle-render" for="toggle-render">render newest added candidates: OFF</label>
+      
       <button id="download-csv" onclick="DownloadAsCSV()">Download CSV</button>
     </div>
+    <script>
+      // Global flag other scripts can read
+      window.renderNewestCandidates = false;
+      function ToggleRenderNewest(el){
+        // el is the checkbox element
+        window.renderNewestCandidates = !!el.checked;
+        const lbl = document.getElementById('toggle-render');
+        lbl.textContent = 'render newest added candidates: ' + (window.renderNewestCandidates ? 'ON' : 'OFF');
+      }
+    </script>
     <script src="NeatJS/cppn.js"></script>
 		<script src="NeatJS/population.js"></script>
 		<script src="NeatJS/player.js"></script>
