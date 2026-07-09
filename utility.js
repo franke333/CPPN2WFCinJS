@@ -1,3 +1,13 @@
+// TODO: Review the generated Doxygen comments in this file manually later.
+
+/**
+ * Reshape a flat or nested array into a 2D matrix.
+ *
+ * @param {Array} array Input array.
+ * @param {number} rows Number of rows in the output.
+ * @param {number} cols Number of columns in the output.
+ * @returns {Array<Array<*>>} The reshaped matrix.
+ */
 function reshape(array, rows, cols){
     if(array.length != rows * cols)
         array = flatten(array);
@@ -11,6 +21,12 @@ function reshape(array, rows, cols){
     return reshaped;
 }
 
+/**
+ * Flatten a 2D array into a 1D array.
+ *
+ * @param {Array} array Input array.
+ * @returns {Array} The flattened array.
+ */
 function flatten(array){
     //check if already flattened
     if(array.length == 0 || !Array.isArray(array[0])){
@@ -25,6 +41,12 @@ function flatten(array){
     return flattened;
 }
 
+/**
+ * Normalize an array so its values sum to 1.
+ *
+ * @param {Array<number>} array Input values.
+ * @returns {Array<number>} The normalized values.
+ */
 function normalize(array){
     let sum = 0;
     for(let i = 0; i < array.length; i++){
@@ -35,6 +57,12 @@ function normalize(array){
     return array.map(x => x / sum);
 }
 
+/**
+ * Normalize a dictionary so its values sum to 1.
+ *
+ * @param {Object<string, number>} dict Input dictionary.
+ * @returns {Object<string, number>} The normalized dictionary.
+ */
 function normalizeDict(dict){
     let sum = 0;
     for(let key in dict){
@@ -52,6 +80,12 @@ function normalizeDict(dict){
 * @param {dict} dict - A dictionary of values and their weights (key: value, value: weight)
 * @returns {number} - A random key based on the weights of the dictionary
 */
+/**
+ * Choose a random key from a weighted dictionary.
+ *
+ * @param {Object<string, number>} dict Dictionary of keys and weights.
+ * @returns {string|null} A randomly selected key.
+ */
 function weightedRandom(dict){
     let total = 0;
     for(let key in dict){

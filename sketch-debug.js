@@ -1,9 +1,17 @@
+// TODO: Review the generated Doxygen comments in this file manually later.
+
 DATA = dragon_warrior;
 
+/**
+ * Load the tileset image before setup runs.
+ */
 function preload() {
   tileset_image = loadImage(DATA.imagepath);
 }
 
+/**
+ * Initialize the debug sketch state.
+ */
 function setup() {
   // run better on mobile devices
   pixelDensity(1);
@@ -18,6 +26,9 @@ function setup() {
   needToRerun = true;
 }
 
+/**
+ * Handle mouse clicks in the debug sketch canvas.
+ */
 function mousePressed() {
   for(const key of Object.keys(rects)){
     const r = rects[key];
@@ -34,7 +45,13 @@ function mousePressed() {
 }
 
 
+/**
+ * Rebuild the ruleset using the current HTML controls.
+ *
+ * @param {boolean} useRandomSeed True to generate a random seed.
+ */
 function runWithHTMLData(useRandomSeed = false) {
+  //TODO Add UI WARNING that geenerate button must be used to perform changes to heuristic or size or seed
   let seed = 0;
   if(useRandomSeed){
     seed = Math.floor(Math.random() * 1000000);
@@ -43,28 +60,31 @@ function runWithHTMLData(useRandomSeed = false) {
   else{
     seed = parseInt(document.getElementById("seed-input").value);
   }
+  randomSeed(seed);
   const size = parseInt(document.getElementById("size-input").value);
-  //TODO heuristic
-
   const cellHeuristic = parseInt(document.querySelector('input[name="heuristic-cell"]:checked').value);
   const tileHeuristic = parseInt(document.querySelector('input[name="heuristic-tile"]:checked').value);
-  randomSeed(seed);
   ruleset = new Ruleset(tileset,weights,3,12,0.001);
   ruleset.prepare(size,cellHeuristic,tileHeuristic);
   instant = document.getElementById("instant-run-checkbox").checked;
   needToRerun = true;
   selected = [];
-  loop();
+  //loop();
   
 }
 
+/**
+ * Mutate the current ruleset while preserving the selected parents.
+ */
 function mutate(){
   const parents = selected.map(id => parseInt(id));
-  ruleset.cppn.mutate(parents);
-  ruleset.restart(parents);
+  ruleset.evolve(parents);
   needToRerun = true;
 }
 
+/**
+ * Draw the debug sketch frame.
+ */
 function draw() {  
 
   if(needToRerun){
@@ -73,6 +93,9 @@ function draw() {
   drawSelection();
 }
 
+/**
+ * Clear the canvas and rerun the ruleset for the current selection.
+ */
 function rerunRuleset(){
   const parents = selected.map(id => parseInt(id));
   background(0);
@@ -83,6 +106,9 @@ function rerunRuleset(){
   needToRerun = false;
 }
 
+/**
+ * Draw selection outlines around the currently selected WFCs.
+ */
 function drawSelection(){
   for(const r of Object.values(rects)){
     const thickness = 6;

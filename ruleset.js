@@ -1,11 +1,34 @@
+// TODO: Review the generated Doxygen comments in this file manually later.
+
+/**
+ * Coordinate a CPPN-driven WFC batch, including weight preparation and rendering.
+ */
 class Ruleset{
+    /**
+     * Create a ruleset for the given tileset and layout configuration.
+     *
+     * @param {Tileset} tileset Tileset used by the WFC instances.
+     * @param {Object} weights Initial layout weights.
+     * @param {number} layoutCount Number of layout channels.
+     * @param {number} population Number of WFC instances to manage.
+     * @param {number} defaultWeight Default weight used for missing entries.
+     */
     constructor(tileset, weights, layoutCount, population=6, defaultWeight=0.1){
         this.tileset = tileset;
         this.layoutCount = layoutCount;
         this.population = population;
         this._createWeightDict(weights,defaultWeight,tileset.tileCount,layoutCount);
+        this.normalizedWeights = new Array(this.population);
     }
 
+    /**
+     * Expand sparse weight data into a dense layout-by-tile dictionary.
+     *
+     * @param {Object} weights Sparse layout weights.
+     * @param {number} defaultW Default weight value.
+     * @param {number} tileCount Number of tiles.
+     * @param {number} layoutCount Number of layouts.
+     */
     _createWeightDict(weights,defaultW,tileCount,layoutCount){
         this.weights = {};
         for(let i = 0; i < layoutCount; i++){
@@ -31,120 +54,70 @@ class Ruleset{
         }
     }
 
-    shannonEntropy(weights) {
-        //normalize props
-        let sum = 0;
-        for(const tile of Object.keys(weights)){
-            sum += weights[tile];
-        }
-        if(sum != 0){
-            for(const tile of Object.keys(weights)){
-                weights[tile] /= sum;
-            }
-        }
-        const entropy = -Object.values(weights).reduce((acc, p) => {
-            if (p > 0) {
-                return acc + p * Math.log(p);
-            }
-            return acc;
-        }, 0);
-        return entropy;
-    }
-
-    fandaEntropy(weights) {
-        const entropy = weights.reduce((acc, p) => {
-            return p > acc ? p : acc;
-        }, 0);
-        return entropy;
-    }
-
-    customHeuristic(entropy,wfc){
-        let bextX = -1;
-        let bextY = -1;
-        let bestHeuristic = -Infinity;
-        for(let x = 0; x < wfc.width; x++){
-            for(let y = 0; y < wfc.height; y++){
-                if(wfc.map[y][x].tile != null){
-                    continue;
-                }
-                const possibleTiles = wfc.map[y][x].possibleTiles;
-                //filter possible tiles
-                let p = {};
-                for(const tile of possibleTiles){
-                    p[tile] = this.normalizedWeights[wfc.id][x][y][tile];
-                }
-                const h = entropy(Object.values(p));
-                if(h > bestHeuristic){
-                    bestHeuristic = h;
-                    bextX = x;
-                    bextY = y;
-                }
-            }
-        }
-        if(bextX == -1 || bextY == -1){
-            return null;
-        }
-        return [bextX, bextY];
-    }
-
-    weightedArgmaxCollapseHeuristic(x,y,wfc){
-        const possibleTiles = wfc.map[y][x].possibleTiles;
-        const layout = this.cppn.getLayoutAt(x,y,true,wfc.id);
-        let dict = {};
-        for(const tile of possibleTiles){
-            dict[tile] = this.weights[layout][tile];
-        }
-        return int(weightedRandom(dict));
-    }
-
-    weightedNormalizedCollapseHeursitic(x,y,wfc){
-        const possibleTiles = wfc.map[y][x].possibleTiles;
-        let dict = {};
-        for(const tile of possibleTiles){
-            dict[tile] = this.normalizedWeights[wfc.id][x][y][tile];
-        }
-        const collapsedTile = int(weightedRandom(dict));
-        //console.log(x,y,dict,collapsedTile);
-        return collapsedTile;
-    }
-
-    precalculateNormWeights(size){
-        this.normalizedWeights = new Array(this.population )
+    /**
+     * Precompute normalized weights for every WFC cell.
+     *
+     * @param {number} size Grid width and height.
+     */
+    precalculateNormWeightsAll(size){
         for(let i = 0; i < this.population ; i++){
-            this.normalizedWeights[i] = new Array(size);
-            for(let j = 0; j < size; j++){
-                this.normalizedWeights[i][j] = new Array(size);
-            }
+            this.precalculateNormWeightsSingle(size,i);
         }
-        for(let l = 0; l < this.population; l++){
-            for(let x = 0; x < size; x++){
-                for(let y = 0; y < size; y++){
-                    //TODO need multiple layouts for each wfc
-                    const layout = this.cppn.getLayoutAt(x,y,false,this.wfcs[l].id);
-                    let dict = {};
-                    for(const tile of Array(this.tileset.tileCount).keys()){
-                        dict[tile] = 0;
-                        for(let i = 0; i < this.layoutCount; i++){
-                            dict[tile] += this.weights[i][tile] * layout[i];
-                        }
+    }
+
+    precalculateNormWeightsSingle(size,wfc_index){
+        if(this.cppn.population.population[wfc_index] == null){
+            this.normalizedWeights[wfc_index] = null;
+            return;
+        }
+
+        this.normalizedWeights[wfc_index] = new Array(size);
+        for(let j = 0; j < size; j++)
+            this.normalizedWeights[wfc_index][j] = new Array(size);
+
+        for(let x = 0; x < size; x++){
+            for(let y = 0; y < size; y++){
+                //TODO need multiple layouts for each wfc
+                const layout = this.cppn.getLayoutAt(x,y,false,this.wfcs[wfc_index].id);
+                let dict = {};
+                for(const tile of Array(this.tileset.tileCount).keys()){
+                    dict[tile] = 0;
+                    for(let i = 0; i < this.layoutCount; i++){
+                        dict[tile] += this.weights[i][tile] * layout[i];
                     }
-                    //normalize p
-                    let sum = 0;
-                    for(const tile of Object.keys(dict)){
-                        sum += dict[tile];
-                    }
-                    if(sum != 0){
-                        for(const tile of Object.keys(dict)){
-                            dict[tile] /= sum;
-                        }
-                    }
-                    this.normalizedWeights[l][x][y] = dict;
                 }
+                //normalize p
+                let sum = 0;
+                for(const tile of Object.keys(dict)){
+                    sum += dict[tile];
+                }
+                if(sum != 0){
+                    for(const tile of Object.keys(dict)){
+                        dict[tile] /= sum;
+                    }
+                }
+                this.normalizedWeights[wfc_index][x][y] = dict;
             }
         }
     }
 
+    /**
+     * Mutate the CPPN and restart the ruleset while keeping selected parents.
+     *
+     * @param {Array<number>} parents Indices of persistent parents.
+     */
+    evolve(parents){
+        this.cppn.mutate(parents);
+        this.restart(parents);
+    }
 
+
+    /**
+     * Draw the current WFC grids, tileset, and CPPN debug views.
+     *
+     * @param {number} x X offset.
+     * @param {number} y Y offset.
+     */
     drawRulesetDebug(x,y){
         let tileSize = this.tileset.tileSize;
         let offsetX = x;
@@ -164,10 +137,25 @@ class Ruleset{
         }
     }
 
+    /**
+     * Draw one WFC instance.
+     *
+     * @param {number} x X offset.
+     * @param {number} y Y offset.
+     * @param {number} wfcIndex WFC index to draw.
+     */
     draw(x,y, wfcIndex=0){
         this.wfcs[wfcIndex].drawCurrentState(x,y);
     }
 
+    /**
+     * Draw all WFC instances in a grid layout and return their rectangles.
+     *
+     * @param {number} x X offset.
+     * @param {number} y Y offset.
+     * @param {number} columns Number of columns to use.
+     * @returns {Object<number, {id: string, x: number, y: number, width: number, height: number}>} Hit rectangles for the rendered WFCs.
+     */
     drawGrid(x,y, columns=5){
         this.columns = columns;
         const spacing = 25;
@@ -185,21 +173,28 @@ class Ruleset{
         return rects;
     }
 
+    /**
+     * Build the CPPN and WFC instances, then initialize heuristics and weights.
+     *
+     * @param {number} size Grid size.
+     * @param {number} tileHeuristic Tile heuristic selector.
+     * @param {number} cellHeuristic Cell heuristic selector.
+     */
     prepare(size,tileHeuristic = 0,cellHeuristic = 0){
         let tileHeuristicFunc = null;
         if(tileHeuristic == 1){
-            tileHeuristicFunc = this.weightedNormalizedCollapseHeursitic.bind(this);
+            tileHeuristicFunc = (x, y, wfc) => weightedNormalizedCollapseHeuristic(x, y, wfc, this.normalizedWeights);
         }
         else if(tileHeuristic == 2){
-            tileHeuristicFunc = this.weightedArgmaxCollapseHeuristic.bind(this);
+            tileHeuristicFunc = (x, y, wfc) => weightedArgmaxCollapseHeuristic(x, y, wfc, this.weights, this.cppn);
         }
         
         let cellHeuristicFunc = null;
         if(cellHeuristic == 1){
-            cellHeuristicFunc = this.customHeuristic.bind(this,this.fandaEntropy.bind(this));
+            cellHeuristicFunc = (wfc) => customHeuristic(fandaEntropy, wfc, this.normalizedWeights);
         }
         else if(cellHeuristic == 2){
-            cellHeuristicFunc = this.customHeuristic.bind(this,this.shannonEntropy.bind(this));
+            cellHeuristicFunc = (wfc) => customHeuristic(shannonEntropy, wfc, this.normalizedWeights);
         }
         
         this.cppn = new CPPN(3, this.layoutCount, size, this.population);
@@ -212,15 +207,25 @@ class Ruleset{
         this.restart();
     }
 
+    /**
+     * Recompute weights and restart all non-parent WFC instances.
+     *
+     * @param {Array<number>} parents Indices of persistent parents.
+     */
     restart(parents = []){
         //this.cppn.generateData();
-        this.precalculateNormWeights(this.size);
+        this.precalculateNormWeightsAll(this.size);
         for(let wfc of this.wfcs){
             if(!parents.includes(wfc.id))
                 wfc.restart();
         }
     }
 
+    /**
+     * Check whether every managed WFC instance completed successfully.
+     *
+     * @returns {boolean} True if all WFCs have collapsed.
+     */
     finishedSuccessfully(){
         for(let wfc of this.wfcs){
             if(!wfc.finishedSuccessfully()){
@@ -230,18 +235,35 @@ class Ruleset{
         return true;
     }
 
+    /**
+     * Advance every WFC by one step, restarting failed instances.
+     *
+     * @param {Array<number>} parents Indices of persistent parents.
+     */
     runStep(parents = []){
         for(let wfc of this.wfcs)
             if(!wfc.run(false))
                 wfc.restart();
     }
 
+    /**
+     * Run every non-parent WFC until completion.
+     *
+     * @param {Array<number>} parents Indices of persistent parents.
+     */
     run(parents = []){
         for(let wfc of this.wfcs)
             if(!parents.includes(wfc.id))
                 wfc.run(true);
     }
 
+    /**
+     * Resolve a mouse coordinate to the corresponding WFC index.
+     *
+     * @param {number} x Mouse x-coordinate.
+     * @param {number} y Mouse y-coordinate.
+     * @returns {number} The matching WFC index or -1.
+     */
     getWFCIndexByCoords(x,y){
         const spacing = 25;
         const borderThickness = 8;

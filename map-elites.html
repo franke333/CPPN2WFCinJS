@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Map Elites</title>
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <script src="libraries/p5.min.js"></script>
+    <script src="libraries/p5.sound.min.js"></script>
+  </head>
+
+  <body>
+    <div>
+      <label for="seed-input">Seed:</label>
+      <input type="text" id="seed-input" placeholder="Seed" value="18">
+      <label>Candidates:</label>
+      <label id="candidates">0</label>
+      <button id="download-csv" onclick="DownloadAsCSV()">Download CSV</button>
+    </div>
+    <script src="NeatJS/cppn.js"></script>
+		<script src="NeatJS/population.js"></script>
+		<script src="NeatJS/player.js"></script>
+		<script src="NeatJS/node.js"></script>
+		<script src="NeatJS/connection.js"></script>
+		<script src="NeatJS/genome.js"></script>
+
+    <script src="data.js"> </script>
+    <script src="utility.js"></script>
+    <script src="heuristics.js"></script>
+    <script src="tileset.js"></script>
+    <script src="wfc.js"></script>
+    <script src="ruleset.js"></script>
+    <script src="map-elites.js"></script>
+    <script src="map-elites-sketch.js"></script>
+  </body>
+</html>
