@@ -6,14 +6,24 @@
 
     <title>Sketch</title>
 
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+      }
+
+      canvas {
+        display: block;
+      }
+    </style>
 
     <script src="libraries/p5.min.js"></script>
     <script src="libraries/p5.sound.min.js"></script>
   </head>
 
   <body>
-    <!-- NeatJS -->
+    <label for="bundle-input">Bundle:</label>
+    <select id="bundle-input"></select>
     <label for="seed-input">Seed:</label>
     <input type="text" id="seed-input" placeholder="Seed" value="18">
     <label for="size-input">Size:</label>
@@ -31,24 +41,23 @@
       <label><input type="radio" name="heuristic-tile" value="1" checked> Franks Entropy</label>
       <label><input type="radio" name="heuristic-tile" value="2"> Shannons Entropy </label>
     </div>
-    <div>
-      <label><input type="checkbox" id="instant-run-checkbox"> Instant run</label>
-    </div>
 
     <button id="generate-btn" onclick="runWithHTMLData()">Generate</button>
     <button id="generate-btn" onclick="runWithHTMLData(true)">Generate (Random Seed)</button>
+    <label id="resets-count">Resets: 0</label>
     <button id="mutate-btn" onclick="mutate()">Mutate</button>
-    <script src="cppn/cppn.js"></script>
-		<script src="cppn/population.js"></script>
-		<script src="cppn/player.js"></script>
-		<script src="cppn/node.js"></script>
-		<script src="cppn/connection.js"></script>
-		<script src="cppn/genome.js"></script>
+    <label id="generation-count">Generation: 0</label>
+    <script src="NeatJS/cppn.js"></script>
+		<script src="NeatJS/population.js"></script>
+		<script src="NeatJS/player.js"></script>
+		<script src="NeatJS/node.js"></script>
+		<script src="NeatJS/connection.js"></script>
+		<script src="NeatJS/genome.js"></script>
 
     <script src="data.js"> </script>
     <script src="utility.js"></script>
     <script src="heuristics.js"></script>
-    <script src="sketch.js"></script>
+    <script src="sketch-debug.js"></script>
     <script src="tileset.js"></script>
     <script src="wfc.js"></script>
     <script src="ruleset.js"></script>

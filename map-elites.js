@@ -71,11 +71,11 @@ class CPPN_ME extends CPPN {
 }
 
 class Ruleset_ME extends Ruleset {
-    prepare(size){
+    prepare(size, cellHeruistic){
         let bucketsX = 20;
         let bucketsY = 20;
         this.tileHeuristicFunc = (x,y,wfc) => weightedNormalizedCollapseHeuristic(x, y, wfc, this.normalizedWeights);
-        this.cellHeuristicFunc = (wfc) => customHeuristic(fandaEntropy, wfc, this.normalizedWeights);
+        this.cellHeuristicFunc = (wfc) => customHeuristic(cellHeruistic, wfc, this.normalizedWeights);
         this.cppn = new CPPN_ME(3, this.layoutCount, size, bucketsX, bucketsY);
         this.size = size;
         this.wfcs = new Array(bucketsX * bucketsY + 1); // +1 for new candidate
@@ -101,7 +101,14 @@ class Ruleset_ME extends Ruleset {
         //TODO correct crossover & mutation resulting in new candidate
         let p1player = parent1.player;
         let p2player = parent2.player;
-        let child = p1player.crossover(p2player);
+        let child = null;
+        if(random() < 0.5){
+            child = p1player.crossover(p2player);
+        }
+        else{
+            child = p1player.clone();
+            child.brain.mutate();
+        }
         this.cppn.population.population[this.candidate_index] = child;
         this.cppn.generateDataSingle(this.candidate_index);
         this.precalculateNormWeightsSingle(this.size,this.candidate_index);

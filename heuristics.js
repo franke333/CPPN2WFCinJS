@@ -31,7 +31,7 @@ function shannonEntropy(weights) {
  * @param {Array<number>|Object<string, number>} weights Input weights.
  * @returns {number} The largest weight value.
  */
-function fandaEntropy(weights) {
+function maximumHeuristics(weights) {
     const values = Array.isArray(weights) ? weights : Object.values(weights);
     return values.reduce((acc, p) => {
         return p > acc ? p : acc;

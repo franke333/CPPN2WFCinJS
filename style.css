@@ -1,8 +1,70 @@
 html, body {
   margin: 0;
   padding: 0;
+  background-color: #000000;
+  color: #ffffff;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  padding: 6px;
+  text-align: center;
 }
 
 canvas {
   display: block;
+  flex-basis: 100%;
+  margin: 12px auto 0;
+  margin-top: 0;
+}
+
+p{
+  font: 12px Arial, sans-serif;
+  margin: 6px;
+}
+
+div {
+  width: 100%;
+}
+
+h2{
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+label,
+select,
+input,
+button {
+  font-size: 1rem;
+}
+
+button {
+  background-color: #000000;
+  color: #ffffff;
+  border: 1px solid #ffffff;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+button:hover,
+button:focus-visible {
+  background-color: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+button:active {
+  transform: translateY(0);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
 }

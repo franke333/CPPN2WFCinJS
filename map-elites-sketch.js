@@ -1,21 +1,35 @@
 // TODO: Replace this visualization with the actual generated 2D map archive once fitness and descriptor logic are implemented.
 
 DATA_ME = dragon_warrior;
-WFC_SIZE = 20
+WFC_SIZE = 24
+EXPERIMENT_NAME = "avg+complexBound";
+BINS = 24;
+
+HEURISTICS = [maximumHeuristics, shannonEntropy];
+HEUR_NAMES = [ "max","shannon"];
 
 function preload(){
     tileset_image = loadImage(DATA_ME.imagepath);
+    seed = 7;
+    current_heuristic_id = -1;
 }
 
 /**
  * Create the canvas and initialize the archive visualization.
  */
 function setup() {
+    // iterate
+    current_heuristic_id++;
+    if(current_heuristic_id >= HEURISTICS.length){
+        current_heuristic_id = 0;
+        seed++;
+    }
+
     let halfWiidth = WFC_SIZE*DATA_ME.size*2+40;
     createCanvas(2*halfWiidth, halfWiidth);
     pixelDensity(1);
     //seed = parseInt(document.getElementById("seed-input").value) || 42;
-    RunCPPN2WFCMapElites();
+    RunCPPN2WFCMapElites(seed);
     //noLoop();
     maxFitness = 10;
     latest_candidate = null;
@@ -26,6 +40,9 @@ function setup() {
  * Draw the current Map-Elites archive as a 2D grid.
  */
 function draw() {
+    let downloadAT = [500,2_000,4_000,6_000,8_000,10_000,12_000,16_000,24_000,32_000,40_000];
+    //let downloadAT = [400, 1600, 2000, 5000];
+    //let downloadAT = [50,100,150];
     let toggleRender = document.getElementById("toggle-render").checked;
     const runsPerFrame = toggleRender ? 1 : 8;
     for(let i = 0; i < runsPerFrame; i++){
@@ -37,7 +54,13 @@ function draw() {
             latest_candidate.historical_id = candidates_count;
         }
         candidates_count++;
-
+    }
+    if(downloadAT.includes(candidates_count)){
+        DownloadAsCSV();
+    }
+    if(candidates_count >= downloadAT[downloadAT.length - 1]){
+        //reset
+        setup();
     }
     document.getElementById("candidates").textContent = candidates_count;
 
@@ -114,7 +137,7 @@ function drawCandidateCPPN(candidate, x, y, size, useArgmaxed = true){
 }
 
 function DownloadAsCSV(){
-    let csvContent = "data:text/csv;charset=utf-8,";
+    let csvContent = "";
     csvContent += `# Map Elites Data - Candidates: ${candidates_count}\n`;
     csvContent += `# Size: ${WFC_SIZE}, Image Path: ${DATA_ME.imagepath}, Seed: ${seed}\n`;
     csvContent += "DescriptorX,DescriptorY,Fitness\n";
@@ -127,13 +150,17 @@ function DownloadAsCSV(){
             }
         }
     }
-    let encodedUri = encodeURI(csvContent);
+
+    // Use Blob/ObjectURL for robust downloads across browsers.
+    const csvBlob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const csvUrl = URL.createObjectURL(csvBlob);
     let link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `map_elites_data_${candidates_count}.csv`);
+    link.setAttribute("href", csvUrl);
+    link.setAttribute("download", `ME_data_${DATA_ME.name}_${HEUR_NAMES[current_heuristic_id]}_${EXPERIMENT_NAME}_${candidates_count}_seed${seed}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(csvUrl);
 }
 
 function DescriptorAvgEntropy(candidate){
@@ -164,7 +191,7 @@ function DescriptorBoundaryComplexity(candidate){
                     let difference = layout[i] - rightLayout[i];
                     delta += difference * difference;
                 }
-                boundaryComplexity += Math.sqrt(delta);
+                boundaryComplexity += delta;
             }
 
             if(y + 1 < candidate.wfc.height){
@@ -174,7 +201,7 @@ function DescriptorBoundaryComplexity(candidate){
                     let difference = layout[i] - downLayout[i];
                     delta += difference * difference;
                 }
-                boundaryComplexity += Math.sqrt(delta);
+                boundaryComplexity += delta;
             }
         }
     }
@@ -209,10 +236,10 @@ function RunCPPN2WFCMapElites(seed = 42){
 
     randomSeed(seed);
     candidates_count = 0;
-    mapElites = new MapElites(DescriptorBoundaryComplexity,16,DescriptorAvgEntropy,16,EvaluatorAgreement);
+    mapElites = new MapElites(DescriptorBoundaryComplexity,BINS,DescriptorAvgEntropy,BINS,EvaluatorAgreement);
     tileset = new Tileset(DATA_ME.size,tileset_image);
     ruleset = new Ruleset_ME(tileset,DATA_ME.weights,3,1,0.001);
-    ruleset.prepare(WFC_SIZE);
+    ruleset.prepare(WFC_SIZE,HEURISTICS[current_heuristic_id]);
     for(let i = 0; i < 25; i++){
         let candidate = ruleset.generateBrandNewCandidate();
         let result = mapElites.add(candidate);

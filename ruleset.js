@@ -158,7 +158,7 @@ class Ruleset{
      */
     drawGrid(x,y, columns=5){
         this.columns = columns;
-        const spacing = 25;
+        const spacing = 16;
         const rects = {};
         for(let i = 0; i < this.population; i++){
             const width = this.tileset.tileSize * this.wfcs[i].width;
@@ -191,7 +191,7 @@ class Ruleset{
         
         let cellHeuristicFunc = null;
         if(cellHeuristic == 1){
-            cellHeuristicFunc = (wfc) => customHeuristic(fandaEntropy, wfc, this.normalizedWeights);
+            cellHeuristicFunc = (wfc) => customHeuristic(maximumHeuristics, wfc, this.normalizedWeights);
         }
         else if(cellHeuristic == 2){
             cellHeuristicFunc = (wfc) => customHeuristic(shannonEntropy, wfc, this.normalizedWeights);

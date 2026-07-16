@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Sketch</title>
+    <title>CPPN2WFCinJS</title>
 
     <link rel="stylesheet" type="text/css" href="style.css">
 
@@ -13,12 +13,17 @@
   </head>
 
   <body>
-    <!-- NeatJS -->
-    <label for="seed-input">Seed:</label>
-    <input type="text" id="seed-input" placeholder="Seed" value="18">
-    <label for="size-input">Size:</label>
-    <input type="number" id="size-input" placeholder="Size" min="1" value="20">
-
+    <div>
+      <h2>CPPN2WFCinJS</h2>
+    </div>
+    <div>
+      <label for="bundle-input">Bundle:</label>
+      <select id="bundle-input"></select>
+      <label for="seed-input">Seed:</label>
+      <input type="text" id="seed-input" placeholder="Seed" value="18">
+      <label for="size-input">Size:</label>
+      <input type="number" id="size-input" placeholder="Size" min="1" value="20">
+    </div>
     <div>
       <label>Cell selection heuristic:</label>
       <label><input type="radio" name="heuristic-cell" value="0"> Random tile</label>
@@ -31,13 +36,20 @@
       <label><input type="radio" name="heuristic-tile" value="1" checked> Franks Entropy</label>
       <label><input type="radio" name="heuristic-tile" value="2"> Shannons Entropy </label>
     </div>
-    <div>
-      <label><input type="checkbox" id="instant-run-checkbox"> Instant run</label>
-    </div>
 
-    <button id="generate-btn" onclick="runWithHTMLData()">Generate</button>
-    <button id="generate-btn" onclick="runWithHTMLData(true)">Generate (Random Seed)</button>
-    <button id="mutate-btn" onclick="mutate()">Mutate</button>
+    <div>
+      <button id="generate-btn" onclick="runWithHTMLData()">Generate</button>
+      <button id="generate-btn" onclick="runWithHTMLData(true)">Generate (Random Seed)</button>
+      <label id="resets-count" style="padding-right: 5em;">Resets: 0</label>
+      <label id="generation-count">Generation: 0</label>
+      <button id="mutate-btn" onclick="mutate()">Mutate</button>
+    </div>
+    <div style="margin-bottom: 0em;">
+      <p>Changed settings will only take effect when pressing the "Generate" button.</p>
+      <p style="margin-bottom: 0em;">Select any images that you like by clicking on them and press the "Mutate" button.
+        If you don't like any, try "Generate"-ing new ones.
+      </p>
+    </div>
     <script src="NeatJS/cppn.js"></script>
 		<script src="NeatJS/population.js"></script>
 		<script src="NeatJS/player.js"></script>
@@ -48,7 +60,7 @@
     <script src="data.js"> </script>
     <script src="utility.js"></script>
     <script src="heuristics.js"></script>
-    <script src="sketch-debug.js"></script>
+    <script src="sketch.js"></script>
     <script src="tileset.js"></script>
     <script src="wfc.js"></script>
     <script src="ruleset.js"></script>
