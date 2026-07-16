@@ -107,7 +107,7 @@ function runWithHTMLData(useRandomSeed = false) {
     const cellHeuristic = parseInt(document.querySelector('input[name="heuristic-cell"]:checked').value);
     const tileHeuristic = parseInt(document.querySelector('input[name="heuristic-tile"]:checked').value);
     ruleset = new Ruleset(tileset, weights, 3, 12, 0.001);
-    ruleset.prepare(size, cellHeuristic, tileHeuristic);
+    ruleset.prepare(size, tileHeuristic, cellHeuristic);
     needToRerun = true;
     selected = [];
     generationCount = 1;

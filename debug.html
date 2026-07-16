@@ -31,15 +31,15 @@
 
     <div>
       <label>Cell selection heuristic:</label>
-      <label><input type="radio" name="heuristic-cell" value="0"> Random tile</label>
-      <label><input type="radio" name="heuristic-cell" value="1" checked> Weighted layout (continous)</label>
-      <label><input type="radio" name="heuristic-cell" value="2"> Weighted layout (argmax)</label>
+      <label><input type="radio" name="heuristic-cell" value="0"> Smallest superposition</label>
+      <label><input type="radio" name="heuristic-cell" value="1" checked> Franks Entropy</label>
+      <label><input type="radio" name="heuristic-cell" value="2"> Shannons Entropy </label>
     </div>
     <div>
       <label>Tile selection heuristic:</label>
-      <label><input type="radio" name="heuristic-tile" value="0"> Smallest superposition</label>
-      <label><input type="radio" name="heuristic-tile" value="1" checked> Franks Entropy</label>
-      <label><input type="radio" name="heuristic-tile" value="2"> Shannons Entropy </label>
+      <label><input type="radio" name="heuristic-tile" value="0"> Random tile</label>
+      <label><input type="radio" name="heuristic-tile" value="1" checked> Weighted layout (continous)</label>
+      <label><input type="radio" name="heuristic-tile" value="2"> Weighted layout (argmax)</label>
     </div>
 
     <button id="generate-btn" onclick="runWithHTMLData()">Generate</button>
