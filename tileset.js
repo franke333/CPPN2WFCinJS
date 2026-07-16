@@ -1,4 +1,3 @@
-// TODO: Review the generated Doxygen comments in this file manually later.
 
 /**
  * Return the opposite direction in the four-way direction enum.

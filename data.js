@@ -1,5 +1,3 @@
-// TODO: Review the generated Doxygen comments in this file manually later.
-
 dragon_warrior = {
     name: "dragon_warrior",
     imagepath: 'assets/dragonwarr_island.png',

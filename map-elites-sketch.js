@@ -1,4 +1,3 @@
-// TODO: Replace this visualization with the actual generated 2D map archive once fitness and descriptor logic are implemented.
 
 DATA_ME = dragon_warrior;
 WFC_SIZE = 24
@@ -38,11 +37,11 @@ function setup() {
 
 /**
  * Draw the current Map-Elites archive as a 2D grid.
+ * Also displayes latest added elite on the side.
  */
 function draw() {
-    let downloadAT = [500,2_000,4_000,6_000,8_000,10_000,12_000,16_000,24_000,32_000,40_000];
-    //let downloadAT = [400, 1600, 2000, 5000];
-    //let downloadAT = [50,100,150];
+    let downloadAt = []
+    //let downloadAt = [500,2_000,4_000,6_000,8_000,10_000,12_000,16_000,24_000,32_000,40_000];
     let toggleRender = document.getElementById("toggle-render").checked;
     const runsPerFrame = toggleRender ? 1 : 8;
     for(let i = 0; i < runsPerFrame; i++){
@@ -55,10 +54,10 @@ function draw() {
         }
         candidates_count++;
     }
-    if(downloadAT.includes(candidates_count)){
+    if(downloadAt.includes(candidates_count)){
         DownloadAsCSV();
     }
-    if(candidates_count >= downloadAT[downloadAT.length - 1]){
+    if(candidates_count >= downloadAt[downloadAt.length - 1]){
         //reset
         setup();
     }
@@ -108,6 +107,14 @@ function draw() {
     }
 }
 
+/**
+ * Draws the CPPN representation of a candidate.
+ * @param {Candidate} candidate The candidate to draw.
+ * @param {number} x The x-coordinate of the drawing area.
+ * @param {number} y The y-coordinate of the drawing area.
+ * @param {number} size The size of each cell in the drawing area.
+ * @param {boolean} useArgmaxed Whether to use argmaxed layout.
+ */
 function drawCandidateCPPN(candidate, x, y, size, useArgmaxed = true){
     const colors = candidate.ruleset.cppn.colors;
     const gridSize = candidate.wfc.width;
@@ -136,6 +143,9 @@ function drawCandidateCPPN(candidate, x, y, size, useArgmaxed = true){
     }
 }
 
+/**
+ * Download the current Map-Elites archive as a CSV file.
+ */
 function DownloadAsCSV(){
     let csvContent = "";
     csvContent += `# Map Elites Data - Candidates: ${candidates_count}\n`;
@@ -163,6 +173,11 @@ function DownloadAsCSV(){
     URL.revokeObjectURL(csvUrl);
 }
 
+/**
+ * Calculates the average entropy of a candidate's layout.
+ * @param {Candidate} candidate The candidate to evaluate.
+ * @returns {number} The average entropy.
+ */
 function DescriptorAvgEntropy(candidate){
     let totalEntropy = 0;
     let count = 0;
@@ -178,6 +193,11 @@ function DescriptorAvgEntropy(candidate){
     return totalEntropy / count;
 }
 
+/**
+ * Calculates the difference between adjacent cells in a candidate's layout.
+ * @param {Candidate} candidate The candidate to evaluate.
+ * @returns {number} The boundary complexity.
+ */
 function DescriptorBoundaryComplexity(candidate){
     let boundaryComplexity = 0;
     for(let x = 0; x < candidate.wfc.width; x++){
@@ -213,6 +233,11 @@ function DescriptorBoundaryComplexity(candidate){
 
 
 
+/**
+ * Evaluates the agreement between a candidate's layout and the wfc output.
+ * @param {Candidate} candidate The candidate to evaluate.
+ * @returns {number} The agreement score.
+ */
 function EvaluatorAgreement(candidate){
     let agreement = 0.0;
     for(let x = 0; x < candidate.wfc.width; x++){
@@ -232,6 +257,10 @@ function EvaluatorAgreement(candidate){
     return agreement;
 }
 
+/**
+ * Runs the CPPN2WFC Map-Elites algorithm.
+ * @param {number} seed The random seed for reproducibility.
+ */
 function RunCPPN2WFCMapElites(seed = 42){
 
     randomSeed(seed);

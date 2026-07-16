@@ -1,5 +1,3 @@
-// TODO: Review the generated Doxygen comments in this file manually later.
-
 /**
  * Compute the Shannon entropy of a weight collection.
  *
@@ -112,15 +110,3 @@ function weightedNormalizedCollapseHeuristic(x, y, wfc, normalizedWeights) {
     return int(weightedRandom(dict));
 }
 
-/**
- * Backwards-compatible alias for the normalized tile collapse heuristic.
- *
- * @param {number} x Cell x-coordinate.
- * @param {number} y Cell y-coordinate.
- * @param {WFC} wfc The WFC instance being evaluated.
- * @param {Array} normalizedWeights Precomputed normalized weights.
- * @returns {number} The chosen tile id.
- */
-function weightedNormalizedCollapseHeursitic(x, y, wfc, normalizedWeights) {
-    return weightedNormalizedCollapseHeuristic(x, y, wfc, normalizedWeights);
-}

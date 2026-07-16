@@ -1,5 +1,3 @@
-// TODO: Review the generated Doxygen comments in this file manually later.
-
 /**
  * Coordinate a CPPN-driven WFC batch, including weight preparation and rendering.
  */

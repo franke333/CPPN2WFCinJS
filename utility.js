@@ -1,4 +1,3 @@
-// TODO: Review the generated Doxygen comments in this file manually later.
 
 /**
  * Reshape a flat or nested array into a 2D matrix.

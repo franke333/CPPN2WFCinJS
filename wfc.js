@@ -1,5 +1,3 @@
-// TODO: Review the generated Doxygen comments in this file manually later.
-
 /**
  * A grid cell that tracks the possible tiles and the collapsed tile.
  */

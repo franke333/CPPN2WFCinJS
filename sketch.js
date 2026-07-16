@@ -1,6 +1,6 @@
-// TODO: Review the generated Doxygen comments in this file manually later.
 
-DATA = PREPARED_BUNDLES.dragon_warrior; // Change this to switch between different datasets (e.g., dragon_warrior, zelda, pokemonRBY).
+
+DATA = PREPARED_BUNDLES.dragon_warrior; // default ruleset
 bundle_images = {};
 
 /**
