@@ -189,7 +189,7 @@ class Ruleset{
         
         let cellHeuristicFunc = null;
         if(cellHeuristic == 1){
-            cellHeuristicFunc = (wfc) => customHeuristic(maximumHeuristics, wfc, this.normalizedWeights);
+            cellHeuristicFunc = (wfc) => customHeuristic(maximumHeuristic, wfc, this.normalizedWeights);
         }
         else if(cellHeuristic == 2){
             cellHeuristicFunc = (wfc) => customHeuristic(shannonEntropy, wfc, this.normalizedWeights);

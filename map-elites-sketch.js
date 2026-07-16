@@ -4,7 +4,7 @@ WFC_SIZE = 24
 EXPERIMENT_NAME = "avg+complexBound";
 BINS = 24;
 
-HEURISTICS = [maximumHeuristics, shannonEntropy];
+HEURISTICS = [maximumHeuristic, shannonEntropy];
 HEUR_NAMES = [ "max","shannon"];
 
 function preload(){
