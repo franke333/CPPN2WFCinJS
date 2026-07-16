@@ -20,7 +20,7 @@ function preload() {
 function setup() {
     // run better on mobile devices
     pixelDensity(1);
-    createCanvas(1920, 1800);
+    createCanvas(1800, 1800);
     randomSeed(18); //18, 108
     setupBundleSelect();
     syncSelectedBundle();
@@ -148,10 +148,11 @@ function rerunRuleset() {
     background(0);
     noSmooth();
     ruleset.run(parents);
+    const xOffset = 32;
     let imageWidth = DATA.size * ruleset.size + 25;
-    let columns = Math.floor(canvas.width / imageWidth);
+    let columns = Math.floor((canvas.width - 2*xOffset) / imageWidth);
     columns = Math.min(columns,5);
-    rects = ruleset.drawGrid(20, 10, columns);
+    rects = ruleset.drawGrid(xOffset, 10, columns);
     needToRerun = false;
 }
 
